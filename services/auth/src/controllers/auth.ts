@@ -110,7 +110,7 @@ const userObj = user[0];
 
   const token = createToken(userObj?.user_id);
 
-  userObj.skills = userObj?.skills || []
+  userObj.skills = userObj.skills || []
 
   delete userObj.password;
 
@@ -127,5 +127,4 @@ const userObj = user[0];
       accessToken: token,
       data:  userObj
     })
-
 })
