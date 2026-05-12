@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 import compression from 'compression';
 import helmet from 'helmet';
 import AuthRouter from './routes/auth.js';
+import { connectKafkaProducer } from './producer.js';
 
 
 
@@ -20,6 +21,8 @@ app.use(
   }),
 );
 app.use(helmet());
+
+connectKafkaProducer()
 
 app.get('/', (req:Request, res:Response) => {
     res.send('Auth service');

@@ -9,7 +9,7 @@ import jwt from "jsonwebtoken"
 
 
 
-const createToken = async (user_id: string) => {
+export const createToken = async (user_id: string) => {
   return jwt.sign({ user_id }, process.env.JWT_SECRET!, { expiresIn: "15d" })
 }
 
@@ -95,12 +95,11 @@ export const loginuser: RequestHandler = TryCatch(async (req: Request, res: Resp
     ARRAY_AGG(s.name) FILTER (WHERE s.name IS NOT NULL) AS skills FROM users u LEFT JOIN user_skills us ON u.user_id = us.user_id LEFT JOIN skills s ON us.skill_id = s.skill_id WHERE u.email = ${email} GROUP BY u.user_id;`
 
 
-if(user.length === 0 && !user)
-{
-  throw new ErrorHandler("User not found", 404);
-} 
+  if (user.length === 0 && !user) {
+    throw new ErrorHandler("User not found", 404);
+  }
 
-const userObj = user[0];
+  const userObj:any = user[0];
 
   const validPassword = await bcrypt.compare(password, userObj?.password);
 
@@ -125,6 +124,6 @@ const userObj = user[0];
       success: true,
       message: "User logged in successfully",
       accessToken: token,
-      data:  userObj
+      data: userObj
     })
 })

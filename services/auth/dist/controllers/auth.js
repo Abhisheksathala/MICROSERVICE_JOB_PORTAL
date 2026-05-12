@@ -61,19 +61,19 @@ export const loginuser = TryCatch(async (req, res) => {
         throw new ErrorHandler("All fields are required", 400);
     }
     //  const user = await sql`SELECT * FROM users WHERE email = ${email}`
-    const user = await sql `SELECT u.user_id ,u.emial,u.password,u.phone_number,u.name,u.role,u.bio,u.resume,u.profile_pic,u.subscribtion,
+    const user = await sql `SELECT u.user_id ,u.email,u.password,u.phone_number,u.name,u.role,u.bio,u.resume,u.profile_pic,u.subscribtion,
     ARRAY_AGG(s.name) FILTER (WHERE s.name IS NOT NULL) AS skills FROM users u LEFT JOIN user_skills us ON u.user_id = us.user_id LEFT JOIN skills s ON us.skill_id = s.skill_id WHERE u.email = ${email} GROUP BY u.user_id;`;
     if (user.length === 0 && !user) {
         throw new ErrorHandler("User not found", 404);
     }
-    if (user.length === 0) {
-        throw new ErrorHandler("User not found", 404);
-    }
-    const validPassword = await bcrypt.compare(password, user[0]?.password);
+    const userObj = user[0];
+    const validPassword = await bcrypt.compare(password, userObj?.password);
     if (!validPassword) {
         throw new ErrorHandler("Invalid password", 401);
     }
-    const token = createToken(user[0]?.user_id);
+    const token = createToken(userObj?.user_id);
+    userObj.skills = userObj.skills || [];
+    delete userObj.password;
     return res
         .status(200)
         .cookie("token", token, {
@@ -85,7 +85,7 @@ export const loginuser = TryCatch(async (req, res) => {
         success: true,
         message: "User logged in successfully",
         accessToken: token,
-        data: user[0]
+        data: userObj
     });
 });
 //# sourceMappingURL=auth.js.map
