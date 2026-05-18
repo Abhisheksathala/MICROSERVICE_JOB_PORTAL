@@ -35,24 +35,26 @@ export const forgetpassword: RequestHandler = TryCatch(async (req: Request, res:
   const messageBody = {
     to: email,
     subject: "Reset your Password - hirehere",
-    html: ForgetPasswordTemplate(email,resetLink)   // publish to the send mail topic
+    html: ForgetPasswordTemplate(email, resetLink)   // publish to the send mail topic
   }
 
-  await PublishToTopic("send-mail",messageBody).catch((err:any)=>{
-    console.log(err?.message,"failed to send email")
+  await PublishToTopic("send-mail", messageBody).catch((err: any) => {
+    console.log(err?.message, "failed to send email")
   })
 
   return res
-  .status(200)
-  .cookie("resetToken",resetToken,{
-    httpOnly:true,
-    secure:true,
-    maxAge:60*60*1000,
-    sameSite:"strict",
-  })
-  .json({
-    success:true,
-    message:"Password reset link sent successfully",
-    data:messageBody
-  })
+    .status(200)
+    .cookie("resetToken", resetToken, {
+      httpOnly: true,
+      secure: true,
+      maxAge: 60 * 60 * 1000,
+      sameSite: "strict",
+    })
+    .json({
+      success: true,
+      message: "Password reset link sent successfully",
+      data: messageBody
+    })
 })
+
+//TODO: Implement the reset password controller and Redis 3:21
